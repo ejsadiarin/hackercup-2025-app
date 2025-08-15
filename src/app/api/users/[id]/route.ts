@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
   const supabase = await createClient();
 
   const { data: user, error } = await supabase
     .from('users')
     .select('id, updated_at, full_name, avatar_url')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error) {
