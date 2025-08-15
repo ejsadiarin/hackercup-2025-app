@@ -39,3 +39,14 @@ export const formatDayToDate = (day: {
 
   return `${yyyy}-${mm}-${dd}`;
 };
+
+export function parseSlugToDay(slug: string) {
+  const date = new Date(slug);
+  return {
+    dayName: date.toLocaleDateString("en-US", { weekday: "long" }),
+    dateNum: date.getDate(),
+    monthName: date.toLocaleDateString("en-US", { month: "long" }),
+    year: date.getFullYear(),
+    count: 0,
+  };
+}
