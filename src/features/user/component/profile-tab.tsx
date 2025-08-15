@@ -1,16 +1,38 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { fetchMyProfile } from '@/utils/session';
+
+type Profile = {
+  full_name: string;
+  avatar_url: string;
+};
 
 export default function ProfileTab() {
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      const profileData = await fetchMyProfile();
+      setProfile(profileData);
+    };
+    getProfile();
+  }, []);
+
   return (
     <>
       <div>
         <div className="flex items-center gap-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={profile?.avatar_url || ''} />
+            <AvatarFallback>
+              {profile?.full_name ? profile.full_name.charAt(0) : 'U'}
+            </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="font-bold">Max Benedict Chavez</h1>
+            <h1 className="font-bold">{profile?.full_name || 'Loading...'}</h1>
+            {/* The location can be added to the users table later */}
             <h2>Pasay</h2>
           </div>
         </div>

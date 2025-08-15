@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { Task } from '@/types/task';
 
 export async function GET(req: NextRequest) {
   const supabase = await createClient();
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const task = await req.json();
+  const task: Task = await req.json();
 
   const { data: newTask, error } = await supabase
     .from('tasks')
