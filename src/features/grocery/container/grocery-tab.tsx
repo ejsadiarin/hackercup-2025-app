@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import RouteMap from "@/features/map/component/RouteMap";
 import GroceryListItem from "../components/grocery-list-item";
 
 interface GroceryItem {
@@ -11,6 +12,11 @@ interface GroceryItem {
 export default function GroceryTab() {
   const [items, setItems] = useState<GroceryItem[]>([]);
   const [newItem, setNewItem] = useState("");
+  const [origin, setOrigin] = useState<{ lat: number; lng: number }>();
+  const [destination, setDestination] = useState<{
+    lat: number;
+    lng: number;
+  }>();
 
   // Add a new grocery item
   const handleAddItem = () => {
@@ -32,11 +38,16 @@ export default function GroceryTab() {
   return (
     <div className="flex flex-col gap-4 pb-12">
       {/* Placeholder for map at the top */}
-      <div className="w-full h-48 rounded-lg border-2 border-dashed border-gray-400 flex items-center justify-center">
-        <p className="text-gray-500 text-center">
-          Map placeholder will appear here
-        </p>
-      </div>
+      <RouteMap
+        origin={origin}
+        destination={destination}
+        travelMode="DRIVING"
+        showTraffic={true}
+        onOriginChange={(loc) => setOrigin({ lat: loc.lat, lng: loc.lng })}
+        onDestinationChange={(loc) =>
+          setDestination({ lat: loc.lat, lng: loc.lng })
+        }
+      />
 
       {/* Shopping List Title */}
       <h1 className="font-bold text-4xl mt-10">Shopping List</h1>

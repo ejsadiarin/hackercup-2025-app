@@ -56,8 +56,8 @@ export default function TaskView({ slug }: TaskViewProps) {
         taskId={tasks[currentIndex].id}
         status={tasks[currentIndex].status}
       >
-        <EmailTab />
-        {/* <GroceryTab /> */}
+        {/* <EmailTab /> */}
+        <GroceryTab />
       </IndivTask>
 
       {/* Right Arrow */}
