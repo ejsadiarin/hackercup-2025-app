@@ -12,7 +12,6 @@ export default function TaskView() {
         </div>
         <CalendarTab />
       </div>
-      <Timer className="mt-4"></Timer>
       {/* Scrollable tasks section */}
       <div className="flex-1 overflow-y-auto pt-12 py-4 px-12">
         <TasksTab />
