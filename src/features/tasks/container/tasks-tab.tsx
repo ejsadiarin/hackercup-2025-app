@@ -23,6 +23,10 @@ export default function TasksTab() {
 
   // Convert selected day to "YYYY-MM-DD" format
   const pgDate = selectedDay ? formatDayToDate(selectedDay) : null;
+  const todayLocal = new Date();
+  const todayLocalStr = `${todayLocal.getFullYear()}-${String(
+    todayLocal.getMonth() + 1
+  ).padStart(2, "0")}-${String(todayLocal.getDate()).padStart(2, "0")}`;
 
   // Fetch tasks whenever selectedDay changes
   useEffect(() => {
@@ -177,13 +181,7 @@ export default function TasksTab() {
       </div>
 
       <div className="mt-48">
-        <button
-          onClick={handleStartMyDay}
-          disabled={isLoading} // Disable button when loading
-          className="flex w-full justify-center border-2 bg-[#A600A9] outline-none text-white px-4 py-2 rounded-lg font-bold"
-        >
-          {isLoading ? "Loading..." : "Start my Day!"} {/* Change button text */}
-        </button>
+ 
       </div>
     </div>
   );
