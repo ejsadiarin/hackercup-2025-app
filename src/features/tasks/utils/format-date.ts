@@ -1,4 +1,4 @@
-export const formatDayToPGTimestamp = (day: {
+export const formatDayToDate = (day: {
   dayName: string;
   dateNum: number;
   monthName: string;
@@ -31,15 +31,11 @@ export const formatDayToPGTimestamp = (day: {
   };
 
   const monthNum = monthMap[day.monthName];
-  const date = new Date(Date.UTC(day.year, monthNum, day.dateNum, 0, 0, 0));
+  const date = new Date(day.year, monthNum, day.dateNum);
 
-  const yyyy = date.getUTCFullYear();
-  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(date.getUTCDate()).padStart(2, "0");
-  const hh = String(date.getUTCHours()).padStart(2, "0");
-  const min = String(date.getUTCMinutes()).padStart(2, "0");
-  const ss = String(date.getUTCSeconds()).padStart(2, "0");
-  const ms = String(date.getUTCMilliseconds()).padStart(3, "0");
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
 
-  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}.${ms}+00`;
+  return `${yyyy}-${mm}-${dd}`;
 };
