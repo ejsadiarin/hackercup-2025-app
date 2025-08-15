@@ -51,7 +51,11 @@ export default function TaskView({ slug }: TaskViewProps) {
       </button>
 
       {/* Task Card */}
-      <IndivTask>
+      <IndivTask
+        title={tasks[currentIndex].title}
+        taskId={tasks[currentIndex].id}
+        status={tasks[currentIndex].status}
+      >
         <div className="flex flex-col items-center gap-2 p-6">
           <p className="font-bold text-lg text-center">
             {tasks[currentIndex].task_type}
