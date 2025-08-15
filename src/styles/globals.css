@@ -120,3 +120,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* hide native number input spinners for inputs with .no-spinner */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinner[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Tailwind utility variant (if you prefer using it explicitly) */
+@layer utilities {
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .no-spinner[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
