@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import IndivTask from "@/features/tasks/components/indiv-task";
 import { Task } from "@/types/task";
 import GroceryTab from "@/features/grocery/container/grocery-tab";
+import EmailTab from "@/features/email/container/email-tab";
 
 interface TaskViewProps {
   slug: string;
@@ -55,7 +56,8 @@ export default function TaskView({ slug }: TaskViewProps) {
         taskId={tasks[currentIndex].id}
         status={tasks[currentIndex].status}
       >
-        <GroceryTab />
+        <EmailTab />
+        {/* <GroceryTab /> */}
       </IndivTask>
 
       {/* Right Arrow */}
