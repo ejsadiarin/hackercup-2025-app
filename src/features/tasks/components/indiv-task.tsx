@@ -15,8 +15,9 @@ export default function IndivTask({
   children,
 }: Readonly<IndivTaskProps>) {
   return (
-    <main className="min-h-screen">
-      <section className="px-8 py-12 flex justify-center">
+    <main className="min-h-screen flex flex-col items-center">
+      {/* Header: Task Title */}
+      <section className="px-8 py-12 flex justify-center w-full">
         <span className="flex items-center gap-2">
           <Image
             src="/adlawon.svg"
@@ -29,9 +30,13 @@ export default function IndivTask({
         </span>
       </section>
 
-      {children}
+      {/* Scrollable content: Shopping list or other children */}
+      <section className="w-full max-h-[60vh] overflow-y-auto px-8">
+        {children}
+      </section>
 
-      <section className="px-8 py-12">
+      {/* Footer: Complete Task button */}
+      <section className="px-8 py-12 w-full">
         <Button
           variant={"violet"}
           className="block max-w-96 w-full mx-auto text-xl h-fit font-semibold"

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import IndivTask from "@/features/tasks/components/indiv-task";
 import { Task } from "@/types/task";
 import { formatDayToDate } from "@/features/tasks/utils/format-date";
+import GroceryTab from "@/features/grocery/container/grocery-tab";
 
 interface TaskViewProps {
   slug: string;
@@ -56,11 +57,7 @@ export default function TaskView({ slug }: TaskViewProps) {
         taskId={tasks[currentIndex].id}
         status={tasks[currentIndex].status}
       >
-        <div className="flex flex-col items-center gap-2 p-6">
-          <p className="font-bold text-lg text-center">
-            {tasks[currentIndex].task_type}
-          </p>
-        </div>
+        <GroceryTab />
       </IndivTask>
 
       {/* Right Arrow */}
