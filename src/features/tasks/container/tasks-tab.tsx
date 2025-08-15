@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import WelcomeTab from "@/features/welcome/container/welcome-tab";
 import { useCalendarStore } from "@/features/store/calendarStore";
 import { Task } from "@/types/task";
-import { formatDayToPGTimestamp } from "../utils/format-date";
+import { formatDayToDate } from "../utils/format-date";
 
 export default function TasksTab() {
   const [tasks, setNewTasks] = useState<Task[]>([]);
@@ -16,7 +16,7 @@ export default function TasksTab() {
 
   let pgTimestamp: string | null = null;
   if (selectedDay) {
-    pgTimestamp = formatDayToPGTimestamp(selectedDay);
+    pgTimestamp = formatDayToDate(selectedDay);
     console.log(pgTimestamp);
   }
 
