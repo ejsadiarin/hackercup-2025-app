@@ -1,18 +1,21 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function GET(req: NextRequest) {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: `${req.nextUrl.origin}/api/auth/callback`
-        }
-    });
-
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${req.nextUrl.origin}/api/auth/callback`
     }
+  });
 
-    return NextResponse.redirect(new URL('/', req.url));
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.redirect(data.url);
 }
