@@ -62,3 +62,22 @@ CREATE POLICY "Users can update their own tasks."
 CREATE POLICY "Users can delete their own tasks."
   ON public.tasks FOR DELETE
   USING ( auth.uid() = user_id );
+
+ALTER TABLE public.tasks RENAME COLUMN created_at TO start_date;
+ALTER TABLE public.tasks RENAME COLUMN due_date TO end_date;
+
+ALTER TABLE public.tasks ALTER COLUMN status DROP DEFAULT;
+ALTER TABLE public.tasks ALTER COLUMN status TYPE text;
+DROP TYPE public.task_status;
+CREATE TYPE public.task_status AS ENUM ('inprogress', 'done');
+ALTER TABLE public.tasks ALTER COLUMN status TYPE public.task_status USING status::public.task_status;
+ALTER TABLE public.tasks ALTER COLUMN status SET DEFAULT 'inprogress';
+
+-- 2. Create task_type enum
+CREATE TYPE public.task_type AS ENUM ('bili', 'appointment', 'punta', 'study');
+
+-- 3. Alter tasks table to use new enum for task_type
+ALTER TABLE public.tasks
+  ALTER COLUMN task_type DROP DEFAULT,
+  ALTER COLUMN task_type TYPE public.task_type USING task_type::public.task_type,
+  ALTER COLUMN task_type DROP NOT NULL;

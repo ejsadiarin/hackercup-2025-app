@@ -23,10 +23,10 @@ export default function TasksTab() {
   const displayDate = selectedDay
     ? `${selectedDay.dayName}, ${selectedDay.monthName} ${selectedDay.dateNum}`
     : new Date().toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-      });
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
 
   // Map month names to numbers for Date
   const monthMap: Record<string, number> = {
@@ -45,7 +45,7 @@ export default function TasksTab() {
   };
 
   const addTaskToDB = async (title: string) => {
-    const task: Omit<Task, "id" | "created_at" | "user_id" | "due_date"> = {
+    const task: Omit<Task, "id" | "start_date" | "user_id" | "end_date"> = {
       title,
       status: "inprogress",
       task_type: null,
