@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import {
   restrictToVerticalAxis,
@@ -56,24 +56,25 @@ export default function DayPlanner() {
   // content width calculation not required; layout uses absolute positioning
 
   // computePositions provided by layout-utils
+  const positions = useMemo(() => computePositions(tasks), [tasks]);
 
-  const positions = computePositions(tasks);
-
-  // Precompute layout info so JSX only contains expressions
-  const layout = tasks.map((task) => {
-    const top = timeToY(task.start);
-    const height = Math.max(timeToY(task.end) - timeToY(task.start), 15);
-    const pos = positions[task.id] ?? { index: 0, size: 1 };
-    const baseWidth = Math.max(100 - pos.index * 25, 25);
-    const widthPercentNum = pos.size === 1 ? 100 : baseWidth;
-    // Anchor reduced widths to the right: left% = 100 - width%
-    const leftPercentNum = Math.max(0, 100 - widthPercentNum);
-    const zIndex = 1000 - Math.round(widthPercentNum); // narrower => larger zIndex
-    return { task, top, height, widthPercentNum, leftPercentNum, zIndex };
-  });
-
-  // Render wider tasks first so narrower tasks render on top
-  layout.sort((a, b) => b.widthPercentNum - a.widthPercentNum);
+  // Precompute layout info so JSX only contains expressions and avoid re-calculating on every render
+  const layout = useMemo(() => {
+    const arr = tasks.map((task) => {
+      const top = timeToY(task.start);
+      const height = Math.max(timeToY(task.end) - timeToY(task.start), 15);
+      const pos = positions[task.id] ?? { index: 0, size: 1 };
+      const baseWidth = Math.max(100 - pos.index * 25, 25);
+      const widthPercentNum = pos.size === 1 ? 100 : baseWidth;
+      // Anchor reduced widths to the right: left% = 100 - width%
+      const leftPercentNum = Math.max(0, 100 - widthPercentNum);
+      const zIndex = 1000 - Math.round(widthPercentNum); // narrower => larger zIndex
+      return { task, top, height, widthPercentNum, leftPercentNum, zIndex };
+    });
+    // Render wider tasks first so narrower tasks render on top
+    arr.sort((a, b) => b.widthPercentNum - a.widthPercentNum);
+    return arr;
+  }, [tasks, positions]);
 
   // Handle drag end (move only)
   const handleDragEnd = (event: DragEndEvent) => {
@@ -195,6 +196,7 @@ export default function DayPlanner() {
                 leftCalc={`${item.leftPercentNum}%`}
                 widthCalc={`calc(${item.widthPercentNum}% - 8px)`}
                 zIndex={item.zIndex}
+                containerRef={containerRef}
                 onResizeMove={(id, newEndY) => {
                   setTasks((prev) =>
                     prev.map((t) => {
