@@ -1,4 +1,5 @@
 import CalendarTab from "@/features/calendar/container/calendar-tab";
+import MapComponent from "@/features/map/component/map";
 import TasksTab from "@/features/tasks/container/tasks-tab";
 import ProfileTab from "@/features/user/component/profile-tab";
 
