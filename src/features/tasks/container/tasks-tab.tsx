@@ -10,6 +10,7 @@ import { formatDayToDate } from "../utils/format-date";
 export default function TasksTab() {
   const [tasks, setNewTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false); // New state for loading
 
   const { selectedDay } = useCalendarStore();
   const displayDate = selectedDay
@@ -98,6 +99,33 @@ export default function TasksTab() {
     }
   };
 
+  const handleStartMyDay = async () => {
+    if (isLoading) return; // Prevent multiple requests
+
+    setIsLoading(true); // Set loading state to true
+    try {
+      const res = await fetch("/api/llm/suggest-schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(tasks), // Send the current tasks
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to suggest schedule");
+      }
+
+      const suggestedTasks: Task[] = await res.json();
+      setNewTasks(suggestedTasks); // Update the tasks with the suggested schedule
+      // Optionally, show a success message or re-fetch tasks
+    } catch (error) {
+      console.error("Error suggesting schedule:", error);
+      // Optionally, show an error message to the user
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  };
+
   const handleRemoveTask = async (taskId: number, index: number) => {
     try {
       const res = await fetch(`/api/tasks/${taskId}`, {
@@ -153,17 +181,7 @@ export default function TasksTab() {
       </div>
 
       <div className="mt-48">
-        <button
-          className={cn(
-            "flex w-full justify-center border-2 px-4 py-2 rounded-lg font-bold",
-            pgDate === todayLocalStr
-              ? "bg-[#A600A9] text-white cursor-pointer hover:bg-[#a600a9c8]"
-              : "bg-gray-400 text-gray-200 cursor-not-allowed"
-          )}
-          disabled={pgDate !== todayLocalStr}
-        >
-          Start my Day!
-        </button>
+ 
       </div>
     </div>
   );
