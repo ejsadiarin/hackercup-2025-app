@@ -124,6 +124,24 @@ export default function DayPlanner() {
   const formatHour = (h: number) =>
     h === 0 ? `12AM` : h < 12 ? `${h}AM` : h === 12 ? `12PM` : `${h - 12}PM`;
 
+  // Auto-scroll to earliest task on mount
+  useEffect(() => {
+    if (tasks.length === 0 || !containerRef.current) return;
+
+    // Find the earliest start time
+    const earliestTask = tasks.reduce((earliest, task) => {
+      const taskStart = timeToY(task.start);
+      const earliestStart = timeToY(earliest.start);
+      return taskStart < earliestStart ? task : earliest;
+    });
+
+    // Calculate scroll position (with some padding above)
+    const scrollToY = Math.max(0, timeToY(earliestTask.start) - 60); // 60px padding above
+
+    // Scroll to position
+    containerRef.current.scrollTop = scrollToY;
+  }, [tasks]);
+
   return (
     <DndContext
       onDragEnd={handleDragEnd}

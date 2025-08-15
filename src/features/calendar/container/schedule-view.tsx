@@ -7,7 +7,7 @@ export default function ScheduleContainer() {
     <>
       <main>
         <div className="p-4">
-          <h1 className="text-2xl font-bold">Schedule</h1>
+          <h1 className="text-3xl font-bold">Schedule</h1>
           <h3 className="text-lg font-semibold">{formatToday()}</h3>
           <p className="text-md font-light mt-2">
             Based on your tasks, here&apos;s a suggested schedule.
@@ -19,7 +19,7 @@ export default function ScheduleContainer() {
           drag around the timeblocks to adjust schedule
         </p>
 
-        <Button variant="default" className="block max-w-64 w-full mx-auto">
+        <Button variant="default" className="block max-w-96 w-full mx-auto">
           Confirm
         </Button>
       </main>

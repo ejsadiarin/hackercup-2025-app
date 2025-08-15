@@ -1,8 +1,8 @@
 import CalendarTab from "@/features/calendar/container/calendar-tab";
 import TasksTab from "@/features/tasks/container/tasks-tab";
 import ProfileTab from "@/features/user/component/profile-tab";
-import Timer from "@/features/calendar/container/timer";
-export default function TaskView() {
+
+export default function TaskTabPage() {
   return (
     <div className="flex flex-col h-screen">
       {/* Full-width sticky header */}
