@@ -119,6 +119,10 @@ export default function DayPlanner() {
     return () => clearInterval(id);
   }, [timelineHeight]);
 
+  // Helper to format hour labels: show 0 as 12AM
+  const formatHour = (h: number) =>
+    h === 0 ? `12AM` : h < 12 ? `${h}AM` : h === 12 ? `12PM` : `${h - 12}PM`;
+
   return (
     <DndContext
       onDragEnd={handleDragEnd}
@@ -127,7 +131,8 @@ export default function DayPlanner() {
       {/* scrollable viewport */}
       <div
         ref={containerRef}
-        className="border bg-white overflow-auto h-[640px] min-w-sm"
+        className="border bg-white overflow-auto"
+        style={{ height: 576, minWidth: 320 }}
       >
         {/* flex row: left gutter (sticky) + right content */}
         <div style={{ display: "flex", minHeight: timelineHeight }}>
@@ -142,9 +147,7 @@ export default function DayPlanner() {
                 style={{ height: 60 }}
                 className="flex items-start justify-end"
               >
-                <span className="mt-0.5 text-gray-600">
-                  {h < 12 ? `${h}AM` : h === 12 ? `12PM` : `${h - 12}PM`}
-                </span>
+                <span className="mt-0.5 text-gray-600">{formatHour(h)}</span>
               </div>
             ))}
           </div>

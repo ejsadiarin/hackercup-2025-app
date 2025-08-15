@@ -67,3 +67,11 @@ export function computePositions(
   }
   return positions;
 }
+
+export function formatToday(date = new Date(), locale = "en-US") {
+  return new Intl.DateTimeFormat(locale, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(date); // -> "Monday, July 21"
+}

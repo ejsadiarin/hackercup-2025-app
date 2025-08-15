@@ -77,7 +77,7 @@ export default function TaskCard({
       {...listeners}
       {...attributes}
       aria-label={`${task.title} from ${task.start} to ${task.end}`}
-      className={`absolute rounded p-2 text-sm shadow ${task.color}`}
+      className={`absolute rounded-2xl py-2 px-4 text-sm shadow border-1 border-gray-600/25 ${task.color}`}
       style={{
         top: snappedY,
         height: displayHeight,
@@ -89,8 +89,8 @@ export default function TaskCard({
       }}
     >
       <div className="flex items-start h-full">
-        <div className="w-1 rounded-l mr-2 bg-blue-500" />
-        <div className="flex-1">
+        {/* allow the flex child to shrink so truncate works */}
+        <div className="flex-1 min-w-0">
           {/* <button
             type="button"
             onPointerDown={(e) => {
@@ -102,9 +102,10 @@ export default function TaskCard({
             hi
           </button> */}
 
-          <div className="font-medium text-sm flex items-center gap-2">
-            <MdLocalGroceryStore />
-            {task.title}
+          <div className="font-medium text-md flex items-center gap-2">
+            <MdLocalGroceryStore className="text-md" />
+            {/* truncate long titles with an ellipsis */}
+            <span className="truncate">{task.title}</span>
           </div>
           <div className="text-xs text-gray-600">
             {task.start} — {task.end}
