@@ -10,6 +10,8 @@ import {
 } from "@react-google-maps/api";
 import { useDirections } from "../hooks/useDirections";
 import { FiSearch } from "react-icons/fi";
+import { FaLocationPin } from "react-icons/fa6";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
 interface LocationSearchResult {
   place_id: string;
@@ -336,12 +338,6 @@ export default function RouteMap({
 
   return (
     <div className="relative flex justify-center items-center flex-col">
-      <button
-        onClick={() => setShowSearch(!showSearch)}
-        className="absolute top-0  left-20 p-2 bg-purple-600 text-white rounded-md hover:bg-blue-700 z-20"
-      >
-        <FiSearch className="text-2xl" />
-      </button>
       {/* Search Interface */}
       {showSearch && (
         <div className="absolute top-4 right-4 z-20 bg-white p-4 rounded-lg shadow-lg w-80 space-y-4">
@@ -469,6 +465,35 @@ export default function RouteMap({
           )}
         </div>
       )}
+
+      {/* Selected Locations Card */}
+      <div className=" bg-gray-100 p-4 rounded-lg shadow-lg w-96">
+        <div className="text-sm space-y-1">
+          <div
+            onClick={() => setShowSearch(!showSearch)}
+            className=" flex justify-between hover:cursor-pointer"
+          >
+            <span className="font-medium flex items-center gap-1">
+              <FaLocationPin />
+              Origin:{"   "}
+            </span>
+            <span className="truncate ">{originAddress || "Not selected"}</span>
+          </div>
+          <HiOutlineDotsVertical />
+          <div
+            onClick={() => setShowSearch(!showSearch)}
+            className="flex justify-between hover:cursor-pointer"
+          >
+            <span className="font-medium text-[#8A009B] flex items-center gap-1">
+              <FaLocationPin /> Destination:{" "}
+            </span>
+            <span className="text-gray-700 truncate">
+              {" "}
+              {destinationAddress || "Not selected"}
+            </span>
+          </div>
+        </div>
+      </div>
 
       <GoogleMap
         mapContainerStyle={mapStyles}
