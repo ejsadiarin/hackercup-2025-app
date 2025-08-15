@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import IndivTask from "@/features/tasks/components/indiv-task";
 import { Task } from "@/types/task";
-import { formatDayToDate } from "@/features/tasks/utils/format-date";
 import GroceryTab from "@/features/grocery/container/grocery-tab";
 
 interface TaskViewProps {
@@ -16,7 +15,6 @@ export default function TaskView({ slug }: TaskViewProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Fetch tasks for the day
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -41,12 +39,12 @@ export default function TaskView({ slug }: TaskViewProps) {
     return <p className="text-center mt-20">No tasks for {selectedDate}</p>;
 
   return (
-    <div className="relative flex justify-center items-center w-full p-4">
+    <div className="relative flex flex-col justify-center items-center w-full p-4">
       {/* Left Arrow */}
       <button
         onClick={prevTask}
         disabled={currentIndex === 0}
-        className="absolute left-2 text-2xl font-bold opacity-50 hover:opacity-100 disabled:opacity-25"
+        className="absolute left-2 top-1/2 -translate-y-1/2 text-2xl font-bold opacity-50 hover:opacity-100 disabled:opacity-25"
       >
         ←
       </button>
@@ -64,10 +62,22 @@ export default function TaskView({ slug }: TaskViewProps) {
       <button
         onClick={nextTask}
         disabled={currentIndex === tasks.length - 1}
-        className="absolute right-2 text-2xl font-bold opacity-50 hover:opacity-100 disabled:opacity-25"
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-2xl font-bold opacity-50 hover:opacity-100 disabled:opacity-25"
       >
         →
       </button>
+
+      {/* Carousel Indicators */}
+      <div className="flex gap-2 mt-4">
+        {tasks.map((_, index) => (
+          <span
+            key={index}
+            className={`w-3 h-3 rounded-full transition-all ${
+              index === currentIndex ? "bg-[#A600A9] scale-110" : "bg-gray-300"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
