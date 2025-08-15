@@ -3,8 +3,8 @@
 interface Product {
   id: number;
   name: string;
-  price: number;
-  image?: string; // optional image URL
+  price: number | string; // allow string from API
+  cover_image?: string;
 }
 
 interface ProductPanelProps {
@@ -12,7 +12,11 @@ interface ProductPanelProps {
 }
 
 export default function ProductPanel({ products }: ProductPanelProps) {
-  const totalPrice = products.reduce((sum, p) => sum + p.price, 0);
+  const totalPrice = products.reduce((sum, p) => {
+    const price =
+      typeof p.price === "string" ? parseFloat(p.price) : p.price || 0;
+    return sum + price;
+  }, 0);
 
   return (
     <div className="bg-gray-100 shadow-md rounded-lg p-4 w-full max-w-2xl flex flex-col">
@@ -31,10 +35,10 @@ export default function ProductPanel({ products }: ProductPanelProps) {
             >
               {/* Product Image */}
               <div className="w-12 h-12 bg-gray-300 rounded flex items-center justify-center">
-                {product.image ? (
+                {product.cover_image ? (
                   <img
-                    src={product.image}
-                    alt={product.name}
+                    src={product.cover_image}
+                    alt={product.name[0]}
                     className="w-full h-full object-cover rounded"
                   />
                 ) : (
@@ -47,7 +51,7 @@ export default function ProductPanel({ products }: ProductPanelProps) {
 
               {/* Product Price */}
               <span className="font-medium text-gray-700">
-                ${product.price}
+                ₱{parseFloat(product.price as any).toFixed(2)}
               </span>
             </div>
           ))
@@ -56,7 +60,7 @@ export default function ProductPanel({ products }: ProductPanelProps) {
 
       {/* Total Price at Bottom Left */}
       <div className="mt-4 text-gray-700 opacity-50 font-semibold">
-        Total: ${totalPrice.toFixed(2)}
+        Total: ₱{totalPrice.toFixed(2)}
       </div>
     </div>
   );
