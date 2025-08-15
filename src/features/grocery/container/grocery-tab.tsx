@@ -3,6 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import RouteMap from "@/features/map/component/RouteMap";
 import GroceryListItem from "../components/grocery-list-item";
+import ProductPanel from "../components/product-panel";
 
 interface GroceryItem {
   id: number;
@@ -81,12 +82,14 @@ export default function GroceryTab() {
           className="border-b-2 border-black outline-none px-2 py-1 flex-1"
         />
       </div>
-
-      {/* Placeholder for AI agent */}
-      <div className="mt-20 flex flex-col items-center justify-center border-2 border-dashed border-gray-400 h-64 w-full rounded-lg">
-        <p className="text-gray-500 text-center">
-          AI Agent integration screen will appear here
-        </p>
+      <div className="mt-6">
+        <ProductPanel
+          products={items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: 0, // Replace with actual prices later
+          }))}
+        />
       </div>
     </div>
   );
