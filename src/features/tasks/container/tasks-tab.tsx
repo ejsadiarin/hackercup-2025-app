@@ -181,7 +181,19 @@ export default function TasksTab() {
       </div>
 
       <div className="mt-48">
- 
+        <button
+          onClick={handleStartMyDay}
+          disabled={pgDate !== todayLocalStr || isLoading} // disabled if not today or loading
+          className={cn(
+            "flex w-full justify-center border-2 px-4 py-2 rounded-lg font-bold",
+            pgDate === todayLocalStr
+              ? "bg-[#A600A9] text-white cursor-pointer hover:bg-[#a600a9c8]"
+              : "bg-gray-400 text-gray-200 cursor-not-allowed",
+            isLoading && "opacity-70 cursor-wait" // optional visual feedback for loading
+          )}
+        >
+          {isLoading ? "Loading..." : "Start my Day!"}
+        </button>
       </div>
     </div>
   );
