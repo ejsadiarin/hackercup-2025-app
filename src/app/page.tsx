@@ -1,7 +1,7 @@
 import CalendarTab from "@/features/calendar/container/calendar-tab";
 import TasksTab from "@/features/tasks/container/tasks-tab";
 import ProfileTab from "@/features/user/component/profile-tab";
-
+import Timer from "@/features/calendar/container/timer";
 export default function TaskView() {
   return (
     <div className="flex flex-col h-screen">
@@ -12,7 +12,6 @@ export default function TaskView() {
         </div>
         <CalendarTab />
       </div>
-
       {/* Scrollable tasks section */}
       <div className="flex-1 overflow-y-auto pt-12 py-4 px-12">
         <TasksTab />

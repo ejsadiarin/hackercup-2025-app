@@ -4,37 +4,94 @@ import TaskList from "../components/task-lists";
 import { cn } from "@/lib/utils";
 import WelcomeTab from "@/features/welcome/container/welcome-tab";
 import { useCalendarStore } from "@/features/store/calendarStore";
+import { Task } from "@/types/task";
+import { formatDayToDate } from "../utils/format-date";
 
 export default function TasksTab() {
-  const [tasks, setNewTasks] = useState<string[]>([]);
+  const [tasks, setNewTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState<string>("");
 
   const { selectedDay } = useCalendarStore();
+  console.log(selectedDay);
+
+  let pgTimestamp: string | null = null;
+  if (selectedDay) {
+    pgTimestamp = formatDayToDate(selectedDay);
+    console.log(pgTimestamp);
+  }
 
   const displayDate = selectedDay
     ? `${selectedDay.dayName}, ${selectedDay.monthName} ${selectedDay.dateNum}`
     : new Date().toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
+
+  // Map month names to numbers for Date
+  const monthMap: Record<string, number> = {
+    January: 0,
+    February: 1,
+    March: 2,
+    April: 3,
+    May: 4,
+    June: 5,
+    July: 6,
+    August: 7,
+    September: 8,
+    October: 9,
+    November: 10,
+    December: 11,
+  };
+
+  const addTaskToDB = async (title: string) => {
+    const task: Omit<Task, "id" | "start_date" | "user_id" | "end_date"> = {
+      title,
+      status: "inprogress",
+      task_type: null,
+    };
+
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(task),
       });
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && newTask.trim() !== "") {
-      setNewTasks((prev) => [...prev, newTask.trim()]);
-      setNewTask("");
+      if (!res.ok) throw new Error("Failed to create task");
+
+      const createdTask: Task = await res.json();
+      setNewTasks((prev) => [...prev, createdTask]);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const handleAddTask = () => {
-    if (newTask.trim() !== "") {
-      setNewTasks((prev) => [...prev, newTask.trim()]);
-      setNewTask("");
+    if (newTask.trim() === "") return;
+    addTaskToDB(newTask.trim());
+    setNewTask("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && newTask.trim() !== "") {
+      handleAddTask();
     }
   };
 
-  const handleRemoveTask = (index: number) => {
-    setNewTasks((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveTask = async (taskId: number, index: number) => {
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete task");
+
+      // Remove from local state
+      setNewTasks((prev) => prev.filter((_, i) => i !== index));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -45,9 +102,9 @@ export default function TasksTab() {
 
       {tasks.map((task, index) => (
         <TaskList
-          key={index}
-          task={task}
-          onRemove={() => handleRemoveTask(index)}
+          key={task.id}
+          task={task} // pass the Task object
+          onRemove={() => handleRemoveTask(task.id, index)}
         />
       ))}
 
