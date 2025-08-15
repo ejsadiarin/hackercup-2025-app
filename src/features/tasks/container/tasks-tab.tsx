@@ -2,6 +2,7 @@
 import { useState } from "react";
 import TaskList from "../components/task-lists";
 import { cn } from "@/lib/utils";
+import WelcomeTab from "@/features/welcome/container/welcome-tab";
 
 export default function TasksTab() {
   const [tasks, setNewTasks] = useState<string[]>([]);
@@ -68,8 +69,12 @@ export default function TasksTab() {
         />
       </div>
 
+      <div className="mt-20 flex justify-center">
+        <WelcomeTab />
+      </div>
+
       {/* Start My Day Button at the bottom */}
-      <div className="mt-72">
+      <div className="mt-48">
         <button className="flex w-full justify-center border-2 bg-[#A600A9] outline-none text-white px-4 py-2 rounded-lg font-bold">
           Start my Day!
         </button>
