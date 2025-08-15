@@ -1,6 +1,10 @@
 // Utility functions and constants used by the Day Planner components
 export const GUTTER = 56; // px left gutter for time labels
 export const PIXELS_PER_MINUTE = 1; // 1 minute == 1px for simplicity
+
+export const SNAP_MINUTES = 15;
+export const SNAP_PX = SNAP_MINUTES * PIXELS_PER_MINUTE;
+
 export const START_HOUR = 0;
 export const HOURS = 24; // 0:00 - 23:00
 
@@ -20,7 +24,8 @@ export function timeToY(time: string) {
 }
 
 export function yToTime(y: number) {
-  const totalMinutes = Math.round(y / (15 * PIXELS_PER_MINUTE)) * 15; // snap to 15
+  const totalMinutes =
+    Math.round(y / PIXELS_PER_MINUTE / SNAP_MINUTES) * SNAP_MINUTES; // snap to SNAP_MINUTES
   const h = Math.floor(totalMinutes / 60) + START_HOUR;
   const m = totalMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;

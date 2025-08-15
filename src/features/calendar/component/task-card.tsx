@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { timeToMinutes } from "../utils/layout-utils";
+import { timeToMinutes, SNAP_PX } from "../utils/layout-utils";
 
 import type { Task } from "../types/types";
 import { MdLocalGroceryStore } from "react-icons/md";
@@ -14,6 +14,7 @@ export default function TaskCard({
   leftCalc,
   widthCalc,
   zIndex,
+  containerRef,
   onResizeMove,
   onResizeEnd,
 }: {
@@ -23,6 +24,7 @@ export default function TaskCard({
   leftCalc: string;
   widthCalc: string;
   zIndex?: number;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
   onResizeMove?: (id: string, newEndY: number) => void;
   onResizeEnd?: (id: string, newEndY: number) => void;
 }) {
@@ -30,7 +32,9 @@ export default function TaskCard({
     id: task.id,
   });
   const transformY = transform?.y ?? 0;
-  const snappedY = Math.round((top + transformY) / 15) * 15;
+  const MIN_HEIGHT_PX = SNAP_PX; // enforce a minimum of one snap interval
+
+  const snappedY = Math.round((top + transformY) / SNAP_PX) * SNAP_PX;
 
   const displayHeight = height;
 
@@ -48,20 +52,51 @@ export default function TaskCard({
 
     const onPointerMove = (ev: PointerEvent) => {
       if (!startRef.current) return;
-      const delta = ev.clientY - startRef.current.startClientY;
-      const newHeight = Math.max(15, startRef.current.startHeight + delta);
-      const snapped = Math.round(newHeight / 15) * 15;
-      const newEndY = top + snapped; // absolute y from top of timeline
-      if (onResizeMove) onResizeMove(task.id, newEndY);
+      // Prefer computing absolute Y from the container rect to avoid scroll/offset issues
+      if (containerRef?.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const scrollTop = containerRef.current.scrollTop || 0;
+        const absY = ev.clientY - rect.top + scrollTop; // y within timeline content (accounts for scroll)
+        let snappedEnd = Math.round(absY / SNAP_PX) * SNAP_PX;
+        // clamp within bounds of the timeline content and ensure minimum height
+        const maxY =
+          containerRef.current.scrollHeight || Number.POSITIVE_INFINITY;
+        snappedEnd = Math.min(Math.max(snappedEnd, top + MIN_HEIGHT_PX), maxY);
+        if (onResizeMove) onResizeMove(task.id, snappedEnd);
+      } else {
+        // fallback to relative delta if container not provided
+        const delta = ev.clientY - startRef.current.startClientY;
+        const newHeight = Math.max(
+          MIN_HEIGHT_PX,
+          startRef.current.startHeight + delta
+        );
+        const snapped = Math.round(newHeight / SNAP_PX) * SNAP_PX;
+        const newEndY = top + snapped; // absolute y from top of timeline
+        if (onResizeMove) onResizeMove(task.id, newEndY);
+      }
     };
 
     const onPointerUp = (ev: PointerEvent) => {
       if (!startRef.current) return;
-      const delta = ev.clientY - startRef.current.startClientY;
-      const newHeight = Math.max(15, startRef.current.startHeight + delta);
-      const snapped = Math.round(newHeight / 15) * 15;
-      const newEndY = top + snapped;
-      if (onResizeEnd) onResizeEnd(task.id, newEndY);
+      if (containerRef?.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const scrollTop = containerRef.current.scrollTop || 0;
+        const absY = ev.clientY - rect.top + scrollTop;
+        let snappedEnd = Math.round(absY / SNAP_PX) * SNAP_PX;
+        const maxY =
+          containerRef.current.scrollHeight || Number.POSITIVE_INFINITY;
+        snappedEnd = Math.min(Math.max(snappedEnd, top + MIN_HEIGHT_PX), maxY);
+        if (onResizeEnd) onResizeEnd(task.id, snappedEnd);
+      } else {
+        const delta = ev.clientY - startRef.current.startClientY;
+        const newHeight = Math.max(
+          MIN_HEIGHT_PX,
+          startRef.current.startHeight + delta
+        );
+        const snapped = Math.round(newHeight / SNAP_PX) * SNAP_PX;
+        const newEndY = top + snapped;
+        if (onResizeEnd) onResizeEnd(task.id, newEndY);
+      }
       startRef.current = null;
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
