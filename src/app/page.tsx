@@ -14,7 +14,7 @@ export default function TaskView() {
       </div>
 
       {/* Scrollable tasks section */}
-      <div className="flex-1 overflow-y-auto py-4 px-12">
+      <div className="flex-1 overflow-y-auto pt-12 py-4 px-12">
         <TasksTab />
       </div>
     </div>
