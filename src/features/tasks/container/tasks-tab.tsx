@@ -7,6 +7,13 @@ export default function TasksTab() {
   const [tasks, setNewTasks] = useState<string[]>([]);
   const [newTask, setNewTask] = useState<string>("");
 
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newTask.trim() !== "") {
       setNewTasks((prev) => [...prev, newTask.trim()]);
@@ -28,7 +35,7 @@ export default function TasksTab() {
   return (
     <div className="flex flex-col gap-4 pb-12">
       <div className="flex bg-white z-10 py-2">
-        <h1 className="font-bold">Saturday, August 16</h1>
+        <h1 className="font-bold">{formattedDate}</h1>
       </div>
 
       {tasks.map((task, index) => (
