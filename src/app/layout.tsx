@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Adlawon",
   description: "Your Life In Control",
+  icons: {
+    icon: "/adlawon.svg",
+  },
 };
 
 export default function RootLayout({
