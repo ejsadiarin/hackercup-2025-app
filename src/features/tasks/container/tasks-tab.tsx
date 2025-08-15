@@ -2,6 +2,7 @@
 import { useState } from "react";
 import TaskList from "../components/task-lists";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function TasksTab() {
   const [tasks, setNewTasks] = useState<string[]>([]);
@@ -19,9 +20,11 @@ export default function TasksTab() {
     <>
       <div className="mt-20 flex flex-col justify-center gap-2">
         {/* Render the Tasks */}
-        {tasks.map((task, index) => (
-          <TaskList key={index} task={task} />
-        ))}
+        <ScrollArea className="h-[280px]  p-4">
+          {tasks.map((task, index) => (
+            <TaskList key={index} task={task} />
+          ))}
+        </ScrollArea>
         <div className="flex items-center gap-2">
           <Checkbox className="border-2- border-black" />{" "}
           <input
