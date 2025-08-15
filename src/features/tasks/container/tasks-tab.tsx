@@ -3,17 +3,21 @@ import { useState } from "react";
 import TaskList from "../components/task-lists";
 import { cn } from "@/lib/utils";
 import WelcomeTab from "@/features/welcome/container/welcome-tab";
+import { useCalendarStore } from "@/features/store/calendarStore";
 
 export default function TasksTab() {
   const [tasks, setNewTasks] = useState<string[]>([]);
   const [newTask, setNewTask] = useState<string>("");
 
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
+  const { selectedDay } = useCalendarStore();
+
+  const displayDate = selectedDay
+    ? `${selectedDay.dayName}, ${selectedDay.monthName} ${selectedDay.dateNum}`
+    : new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newTask.trim() !== "") {
@@ -36,7 +40,7 @@ export default function TasksTab() {
   return (
     <div className="flex flex-col gap-4 pb-12">
       <div className="flex bg-white z-10 py-2">
-        <h1 className="font-bold">{formattedDate}</h1>
+        <h1 className="font-bold">{displayDate}</h1>
       </div>
 
       {tasks.map((task, index) => (
