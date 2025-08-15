@@ -3,7 +3,7 @@ export type Task = {
   created_at: string;
   due_date: string | null;
   title: string;
-  status: 'todo' | 'inprogress' | 'done';
+  status: "inprogress" | "done";
   task_type: string | null;
   user_id: string;
 };
