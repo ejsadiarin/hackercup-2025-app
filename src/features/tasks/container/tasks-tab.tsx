@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TaskList from "../components/task-lists";
 import { cn } from "@/lib/utils";
 import WelcomeTab from "@/features/welcome/container/welcome-tab";
@@ -12,37 +12,52 @@ export default function TasksTab() {
   const [newTask, setNewTask] = useState<string>("");
 
   const { selectedDay } = useCalendarStore();
-  console.log(selectedDay);
-
-  let pgTimestamp: string | null = null;
-  if (selectedDay) {
-    pgTimestamp = formatDayToDate(selectedDay);
-    console.log(pgTimestamp);
-  }
-
   const displayDate = selectedDay
     ? `${selectedDay.dayName}, ${selectedDay.monthName} ${selectedDay.dateNum}`
     : new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
 
-  // Map month names to numbers for Date
-  const monthMap: Record<string, number> = {
-    January: 0,
-    February: 1,
-    March: 2,
-    April: 3,
-    May: 4,
-    June: 5,
-    July: 6,
-    August: 7,
-    September: 8,
-    October: 9,
-    November: 10,
-    December: 11,
-  };
+  // Convert selected day to "YYYY-MM-DD" format
+  const pgDate = selectedDay ? formatDayToDate(selectedDay) : null;
+
+  // Fetch tasks whenever selectedDay changes
+  useEffect(() => {
+    if (!pgDate) {
+      setNewTasks([]);
+      return;
+    }
+
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch(`/api/tasks?date=${pgDate}`);
+        if (!res.ok) throw new Error("Failed to fetch tasks");
+        const data: Task[] = await res.json();
+
+        // Convert pgDate to a JS Date object at local midnight
+        const selectedDateObj = new Date(pgDate + "T00:00:00");
+
+        // Filter tasks to match the selected date
+        const filtered = data.filter((task) => {
+          const taskDateObj = new Date(task.start_date); // UTC timestamp from Supabase
+          return (
+            taskDateObj.getFullYear() === selectedDateObj.getFullYear() &&
+            taskDateObj.getMonth() === selectedDateObj.getMonth() &&
+            taskDateObj.getDate() === selectedDateObj.getDate()
+          );
+        });
+
+        setNewTasks(filtered);
+      } catch (err) {
+        console.error(err);
+        setNewTasks([]);
+      }
+    };
+
+    fetchTasks();
+  }, [pgDate]);
 
   const addTaskToDB = async (title: string) => {
     const task: Omit<Task, "id" | "start_date" | "user_id" | "end_date"> = {
@@ -87,7 +102,6 @@ export default function TasksTab() {
 
       if (!res.ok) throw new Error("Failed to delete task");
 
-      // Remove from local state
       setNewTasks((prev) => prev.filter((_, i) => i !== index));
     } catch (err) {
       console.error(err);
@@ -103,7 +117,7 @@ export default function TasksTab() {
       {tasks.map((task, index) => (
         <TaskList
           key={task.id}
-          task={task} // pass the Task object
+          task={task}
           onRemove={() => handleRemoveTask(task.id, index)}
         />
       ))}
@@ -134,7 +148,6 @@ export default function TasksTab() {
         <WelcomeTab />
       </div>
 
-      {/* Start My Day Button at the bottom */}
       <div className="mt-48">
         <button className="flex w-full justify-center border-2 bg-[#A600A9] outline-none text-white px-4 py-2 rounded-lg font-bold">
           Start my Day!
