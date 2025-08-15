@@ -137,3 +137,7 @@ Content-Type: application/json
     "user_id": "f1ab2039-e7eb-4d56-8a4e-367dc3e63fe0"
   }
 ]
+
+###
+# @name Search Products by Name
+GET {{baseUrl}}/api/products/search?name=hotdog
