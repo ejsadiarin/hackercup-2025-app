@@ -1,20 +1,14 @@
 "use client";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import TimerCircle from "../component/timer-circle";
 import { TimerInputs } from "../component/timer-inputs";
 import { TimerControls } from "../component/timer-controls";
 
-function formatTime(remaining: number) {
-  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
-  const ss = String(remaining % 60).padStart(2, "0");
-  return `${mm}:${ss}`;
-}
-
 export default function Timer({ className }: { className?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [key, setKey] = useState(0);
-  // local minutes input with default value (20 minutes)
+
+  // default 20:00
   const DEFAULT_DURATION_MIN = 20;
 
   // numeric state used for the actual timer duration
@@ -52,7 +46,6 @@ export default function Timer({ className }: { className?: string }) {
   };
 
   const adjustMinutes = (delta: number) => {
-    // operate on the committed numeric minutes state
     const next = Math.max(0, durationMinutes + delta);
     setDurationMinutes(next);
     setMinutesStr(String(next));
@@ -62,19 +55,17 @@ export default function Timer({ className }: { className?: string }) {
 
   return (
     <div
-      className={`flex justify-center ${
+      className={`flex justify-center items-center bg-slate-200 p-12 rounded-xl w-full ${
         className ?? ""
-      } bg-slate-200 mx-6 p-12 rounded-xl`}
+      }`}
     >
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex items-center gap-6">
-          <div className="flex-shrink-0">
-            <TimerCircle
-              timerKey={key}
-              isPlaying={isPlaying}
-              duration={timerDuration}
-            />
-          </div>
+      <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex items-center justify-center gap-6 w-full">
+          <TimerCircle
+            timerKey={key}
+            isPlaying={isPlaying}
+            duration={timerDuration}
+          />
         </div>
 
         <TimerInputs
