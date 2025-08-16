@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
   // LLM Prompt (kept for reference/show)
   const llmPrompt = `You are a helpful assistant that helps users organize their daily tasks.
 Given an array of tasks in JSON format, your goal is to:
-1. Suggest a reasonable 'start_date' and 'end_date' for each task, assuming a typical workday. Both 'start_date' and 'end_date' should be full ISO 8601 timestamps (e.g., 'YYYY-MM-DDTHH:MM:SS.sssZ'). Ensure 'end_date' is after 'start_date'. Tasks should be scheduled for the same day as their original 'start_date'. Crucially, ensure there are no overlaps between tasks, and maintain at least a 15-minute gap between the end of one task and the start of the next (e.g., if Task 1 ends at 5:00 PM, Task 2 should start at 5:15 PM or later). Another crucial thing is that titles can be in Filipino.
+1. Suggest a reasonable 'start_date' and 'end_date' for each task, assuming a typical workday. Both 'start_date' and 'end_date' should be full ISO 8601 timestamps (e.g., 'YYYY-MM-DDTHH:MM:SS.sssZ'). Ensure 'end_date' is after 'start_date'. Tasks should be scheduled for the same day as their original 'start_date'. Crucially, ensure there are no overlaps between tasks, and maintain at least a 15-minute gap between the end of one task and the start of the next (e.g., if Task 1 ends at 5:00 PM, Task 2 should start at 5:15 PM or later).
 2. Return the updated array of tasks in the exact same JSON format. Do not include any other text or explanation.
 
 Example Input:
@@ -142,35 +142,49 @@ Example Output:
 Tasks to process:
 ${JSON.stringify(categorizedTasks)}`;
 
-  // --- LLM Call  ---
+  // --- LLM Call (commented out, kept for show) ---
+  // try {
+  //   const result = await ai.models.generateContent({
+  //     model: "gemini-2.5-flash",
+  //     contents: [{ text: llmPrompt }],
+  //   });
+  //   const text = result.text;
+
+  //   if (typeof text !== 'string') {
+  //     return NextResponse.json({ error: 'LLM did not return valid text.' }, { status: 500 });
+  //   }
+
+  //   // Extract JSON from markdown code block if present
+  //   const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+  //   let jsonString = text;
+  //   if (jsonMatch && jsonMatch[1]) {
+  //     jsonString = jsonMatch[1];
+  //   }
+
+  //   const parsedSuggestedTasks: Task[] = JSON.parse(jsonString);
+
+  //   if (!Array.isArray(parsedSuggestedTasks)) {
+  //     return NextResponse.json({ error: 'LLM did not return a valid array of tasks.' }, { status: 500 });
+  //   }
+  //   // suggestedTasks = parsedSuggestedTasks; // This line would be active if LLM was used
+  // } catch (error: any) {
+  //   console.error('Error during LLM integration:', error);
+  //   let errorMessage = 'An unexpected error occurred';
+  //   try {
+  //     const errorObj = JSON.parse(error.message);
+  //     if (errorObj.error && errorObj.error.message) {
+  //       errorMessage = errorObj.error.message;
+  //     }
+  //   } catch (parseError) {
+  //     errorMessage = error.message;
+  //   }
+  //   return NextResponse.json({ error: errorMessage }, { status: 500 });
+  // }
+  // --- End LLM Call ---
+
+  // Scheduling Implementation 
   try {
-    const result = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [{ text: llmPrompt }],
-    });
-    const text = result.text;
-
-    if (typeof text !== 'string') {
-      return NextResponse.json({ error: 'LLM did not return valid text.' }, { status: 500 });
-    }
-
-    // Extract JSON from markdown code block if present
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-    let jsonString = text;
-    if (jsonMatch && jsonMatch[1]) {
-      jsonString = jsonMatch[1];
-    }
-
-    const parsedSuggestedTasks: Task[] = JSON.parse(jsonString);
-
-    if (!Array.isArray(parsedSuggestedTasks)) {
-      return NextResponse.json({ error: 'LLM did not return a valid array of tasks.' }, { status: 500 });
-    }
-    const suggestedTasks: Task[] = parsedSuggestedTasks; // This line is now active
-
-    // Scheduling Implementation (commented out)
-    // try {
-    //   const suggestedTasks: Task[] = generateScheduleLocally(categorizedTasks);
+    const suggestedTasks: Task[] = generateScheduleLocally(categorizedTasks);
 
     const updatePromises = suggestedTasks.map(async (suggestedTask) => {
       const { data, error } = await supabase
