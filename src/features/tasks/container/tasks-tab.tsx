@@ -5,15 +5,17 @@ import { cn } from "@/lib/utils";
 import WelcomeTab from "@/features/welcome/container/welcome-tab";
 import { useCalendarStore } from "@/features/store/calendarStore";
 import { Task } from "@/types/task";
-import { formatDayToDate } from "../utils/format-date";
+import { formatDayToDate, formatWeekToDay } from "../utils/format-date";
 import Link from "next/link";
 import { useTasksQuery } from "../hooks/useTasksQuery";
 import useAddTaskMutate from "../hooks/useAddTaskMutation";
 import { useDeleteTaskMutation } from "../hooks/useDeleteTaskMutate";
+import { useSuggestScheduleMutation } from "../hooks/useSuggestionMutate";
 
 export default function TasksTab() {
-  const [newTask, setNewTask] = useState<string>("");
-  const { selectedDay } = useCalendarStore();
+  const [newTask, setTask] = useState<string>("");
+  const [suggestedTasks, setSuggestedTasks] = useState<Task[]>([]);
+  const { selectedDay, setSelectedDay } = useCalendarStore();
   const {
     data: apiTasks,
     isLoading,
@@ -32,26 +34,52 @@ export default function TasksTab() {
 
   // Convert selected day to "YYYY-MM-DD" format
   const pgDate = selectedDay ? formatDayToDate(selectedDay) : null;
+  const todayLocal = new Date();
+  const todayLocalStr = `${todayLocal.getFullYear()}-${String(
+    todayLocal.getMonth() + 1
+  ).padStart(2, "0")}-${String(todayLocal.getDate()).padStart(2, "0")}`;
 
   const addTaskToDB = (title: string) => {
-    const task: Omit<Task, "id" | "start_date" | "user_id" | "end_date"> = {
+    const task: Omit<Task, "id" | "user_id"> = {
       title,
       status: "inprogress",
       task_type: null,
+      start_date: selectedDay ? formatDayToDate(selectedDay) ?? "" : "",
+      end_date: selectedDay ? formatDayToDate(selectedDay) ?? "" : "",
     };
 
     addTaskMutation.mutate(task);
   };
 
+  const { mutate, data } = useSuggestScheduleMutation();
+
   const handleAddTask = () => {
     if (newTask.trim() === "") return;
     addTaskToDB(newTask.trim());
-    setNewTask("");
+    setTask("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newTask.trim() !== "") {
       handleAddTask();
+    }
+  };
+
+  const handleStartMyDay = async () => {
+    try {
+      mutate(apiTasks ?? [], {
+        onSuccess: (t) => {
+          console.log("Suggested tasks:", t);
+          setSuggestedTasks(t); // Update the tasks with the suggested schedule
+          // optionally update cache or state here
+        },
+        onError: (err) => console.error(err),
+      });
+
+      // Optionally, show a success message or re-fetch tasks
+    } catch (error) {
+      console.error("Error suggesting schedule:", error);
+      // Optionally, show an error message to the user
     }
   };
 
@@ -107,7 +135,7 @@ export default function TasksTab() {
           type="text"
           placeholder="Add a new Todo list"
           value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
+          onChange={(e) => setTask(e.target.value)}
           onKeyDown={handleKeyDown}
           className="border-b-2 border-black outline-none px-2 py-1"
         />
@@ -121,8 +149,18 @@ export default function TasksTab() {
         <Link
           href={`/schedule/${selectedDay ? formatDayToDate(selectedDay) : ""}`}
         >
-          <button className="flex w-full justify-center border-2 bg-[#A600A9] outline-none text-white px-4 py-2 rounded-lg font-bold">
-            Start my Day!
+          <button
+            onClick={handleStartMyDay}
+            disabled={pgDate !== todayLocalStr || isLoading} // disabled if not today or loading
+            className={cn(
+              "flex w-full justify-center border-2 px-4 py-2 rounded-lg font-bold",
+              pgDate === todayLocalStr
+                ? "bg-[#A600A9] text-white cursor-pointer hover:bg-[#a600a9c8]"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed",
+              isLoading && "opacity-70 cursor-wait" // optional visual feedback for loading
+            )}
+          >
+            {isLoading ? "Loading..." : "Start my Day!"}
           </button>
         </Link>
       </div>

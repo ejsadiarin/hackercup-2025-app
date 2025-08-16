@@ -2,16 +2,17 @@ import { Task } from "@/types/task";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchTasks(params?: { start_date?: string }) {
-  const url = new URL("/api/tasks", window.location.origin);
-  console.log(params?.start_date);
+  const url = new URL("/api/tasks/by-date", window.location.origin);
+  console.log(url.toString());
 
   if (params?.start_date) url.searchParams.append("date", params.start_date);
 
   const res = await fetch(url.toString());
+  console.log(url.toString());
   if (!res.ok) throw new Error("Failed to fetch tasks");
 
   const data = await res.json();
-  console.log(data);
+
   return data;
 }
 

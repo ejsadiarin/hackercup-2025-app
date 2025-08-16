@@ -93,8 +93,9 @@ export default function DayPlanner({ slug }: { slug: string }) {
           const duration = timeToY(task.end) - timeToY(task.start);
           const newEnd = yToTime(clamped + duration);
 
-          const isoStart = new Date(`1970-01-01T${newStart}:00`).toISOString();
-          const isoEnd = new Date(`1970-01-01T${newEnd}:00`).toISOString();
+          const today = new Date().toISOString().split("T")[0]; // Get YYYY-MM-DD
+          const isoStart = new Date(`${today}T${newStart}:00`).toISOString();
+          const isoEnd = new Date(`${today}T${newEnd}:00`).toISOString();
           updateTaskMutation.mutate({
             id: Number(task.id),
             start_date: isoStart,
@@ -233,8 +234,9 @@ export default function DayPlanner({ slug }: { slug: string }) {
                       if (t.id !== id) return t;
                       // Call your existing mutation
                       const newEndTime = yToTime(newEndY);
+                      const today = new Date().toISOString().split("T")[0]; // Get YYYY-MM-DD
                       const isoEnd = new Date(
-                        `1970-01-01T${newEndTime}:00`
+                        `${today}T${newEndTime}:00`
                       ).toISOString();
                       updateTaskMutation.mutate({
                         id: Number(id),

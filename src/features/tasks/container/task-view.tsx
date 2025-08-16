@@ -5,6 +5,8 @@ import { Task } from "@/types/task";
 import GroceryTab from "@/features/grocery/container/grocery-tab";
 import EmailTab from "@/features/email/container/email-tab";
 import { useCalendarStore } from "@/features/store/calendarStore";
+import Timer from "@/features/calendar/container/timer";
+import FocusMode from "@/features/canvas/container/focus-mode";
 
 export default function TaskView() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -56,8 +58,10 @@ export default function TaskView() {
         taskId={tasks[currentIndex].id}
         status={tasks[currentIndex].status}
       >
-        <EmailTab />
-        {/* <GroceryTab /> */}
+        {tasks[currentIndex].task_type === "bili" && <GroceryTab />}
+        {tasks[currentIndex].task_type === "appointment" && <EmailTab />}
+        {tasks[currentIndex].task_type === "punta" && <FocusMode />}
+        {tasks[currentIndex].task_type === "study" && <Timer />}
       </IndivTask>
 
       {/* Right Arrow */}

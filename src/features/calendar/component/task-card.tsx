@@ -43,8 +43,6 @@ export default function TaskCard({
     null
   );
 
-  const updateTaskMutation = useUpdateTaskMutation();
-
   const handlePointerDown = (e: React.PointerEvent) => {
     e.stopPropagation();
     e.preventDefault();
