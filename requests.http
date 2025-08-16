@@ -141,3 +141,9 @@ Content-Type: application/json
 ###
 # @name Search Products by Name
 GET {{baseUrl}}/api/products/search?name=hotdog
+
+###
+# @name Complete Task by ID
+# Replace {id} with an actual task ID
+PATCH {{baseUrl}}/api/tasks/complete/1
+Authorization: Bearer {{authToken}}

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "canvas-assign-1",
+    "title": "GE-06: Stacks & Queues (Basic Knowledge)",
+    "courseCode": "1243_CCDSALG_S11",
+    "dueDate": "2025-08-23T23:59:59.000Z",
+    "instructor": "SALVADOR, FLORANTE",
+    "details": [
+      "This is an **open notes/resources GRADED EXERCISE (graded quiz)**. The resulting score will contribute to your final grade.",
+      "**Honesty Policy and Honor Code Apply.** Cheating is an unacceptable behavior which will result in a final grade of 0.0 for this course. You should turn in answers based on your individual efforts. Except with your teacher, you are NOT allowed to communicate with anybody about the questions and corresponding answers.",
+      "You are given at most **10 attempts**. If your score is low, you may retake the quiz. The **AVERAGE score** based on all attempts will be recorded."
+    ],
+    "canvasUrl": "https://canvas.example.com/courses/123/assignments/456"
+  },
+  {
+    "id": "canvas-assign-2",
+    "title": "CS101: Introduction to Algorithms (Problem Set 1)",
+    "courseCode": "CS101_ALG_F25",
+    "dueDate": "2025-09-01T17:00:00.000Z",
+    "instructor": "DR. ANNA SMITH",
+    "details": [
+      "This problem set covers basic algorithmic concepts including sorting and searching.",
+      "Please submit your solutions as a single PDF file. Late submissions will incur a penalty of 10% per day."
+    ],
+    "canvasUrl": "https://canvas.example.com/courses/101/assignments/789"
+  }
+]
