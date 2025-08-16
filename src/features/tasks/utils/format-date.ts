@@ -1,9 +1,18 @@
-export const formatDayToDate = (day: {
+type WeekDay = {
+  dayName: string;
+  dateNum: number;
+  monthName: string;
+  year: number;
+  count: number;
+};
+
+export const formatDayToDate = (day?: {
   dayName: string;
   dateNum: number;
   monthName: string;
   year: number;
 }) => {
+  if (!day) return;
   const monthMap: Record<string, number> = {
     Jan: 0,
     January: 0,
@@ -39,6 +48,22 @@ export const formatDayToDate = (day: {
 
   return `${yyyy}-${mm}-${dd}`;
 };
+
+export function formatWeekToDay(dateInput: WeekDay, count = 0): string {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+
+  const dayName = date.toLocaleString("en-US", { weekday: "long" });
+  const dateNum = date.getDate();
+  const monthName = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
+
+  // pad month/day with leading zeros
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const isoDate = `${year}-${mm}-${dd}`;
+
+  return isoDate;
+}
 
 export function parseSlugToDay(slug: string) {
   const date = new Date(slug);

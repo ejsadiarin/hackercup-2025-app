@@ -6,6 +6,7 @@ import { timeToMinutes, SNAP_PX } from "../utils/layout-utils";
 
 import type { Task } from "../types/types";
 import { MdLocalGroceryStore } from "react-icons/md";
+import { useUpdateTaskMutation } from "@/features/tasks/hooks/useUpdateTaskMutation";
 
 export default function TaskCard({
   task,

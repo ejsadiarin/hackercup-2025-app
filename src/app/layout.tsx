@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
+import QueryProvider from "@/lib/query-client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,7 @@ export default function RootLayout({
       >
         <div className="flex justify-center items-center h-screen w-screen">
           <div className="relative max-w-xl w-full min-h-screen bg-white">
-            {children}
+            <QueryProvider>{children}</QueryProvider>
           </div>
         </div>
       </body>
