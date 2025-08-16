@@ -142,49 +142,35 @@ Example Output:
 Tasks to process:
 ${JSON.stringify(categorizedTasks)}`;
 
-  // --- LLM Call (commented out, kept for show) ---
-  // try {
-  //   const result = await ai.models.generateContent({
-  //     model: "gemini-2.5-flash",
-  //     contents: [{ text: llmPrompt }],
-  //   });
-  //   const text = result.text;
-
-  //   if (typeof text !== 'string') {
-  //     return NextResponse.json({ error: 'LLM did not return valid text.' }, { status: 500 });
-  //   }
-
-  //   // Extract JSON from markdown code block if present
-  //   const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-  //   let jsonString = text;
-  //   if (jsonMatch && jsonMatch[1]) {
-  //     jsonString = jsonMatch[1];
-  //   }
-
-  //   const parsedSuggestedTasks: Task[] = JSON.parse(jsonString);
-
-  //   if (!Array.isArray(parsedSuggestedTasks)) {
-  //     return NextResponse.json({ error: 'LLM did not return a valid array of tasks.' }, { status: 500 });
-  //   }
-  //   // suggestedTasks = parsedSuggestedTasks; // This line would be active if LLM was used
-  // } catch (error: any) {
-  //   console.error('Error during LLM integration:', error);
-  //   let errorMessage = 'An unexpected error occurred';
-  //   try {
-  //     const errorObj = JSON.parse(error.message);
-  //     if (errorObj.error && errorObj.error.message) {
-  //       errorMessage = errorObj.error.message;
-  //     }
-  //   } catch (parseError) {
-  //     errorMessage = error.message;
-  //   }
-  //   return NextResponse.json({ error: errorMessage }, { status: 500 });
-  // }
-  // --- End LLM Call ---
-
-  // Scheduling Implementation 
+  // --- LLM Call  ---
   try {
-    const suggestedTasks: Task[] = generateScheduleLocally(categorizedTasks);
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [{ text: llmPrompt }],
+    });
+    const text = result.text;
+
+    if (typeof text !== 'string') {
+      return NextResponse.json({ error: 'LLM did not return valid text.' }, { status: 500 });
+    }
+
+    // Extract JSON from markdown code block if present
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+    let jsonString = text;
+    if (jsonMatch && jsonMatch[1]) {
+      jsonString = jsonMatch[1];
+    }
+
+    const parsedSuggestedTasks: Task[] = JSON.parse(jsonString);
+
+    if (!Array.isArray(parsedSuggestedTasks)) {
+      return NextResponse.json({ error: 'LLM did not return a valid array of tasks.' }, { status: 500 });
+    }
+    const suggestedTasks: Task[] = parsedSuggestedTasks; // This line is now active
+
+    // Scheduling Implementation (commented out)
+    // try {
+    //   const suggestedTasks: Task[] = generateScheduleLocally(categorizedTasks);
 
     const updatePromises = suggestedTasks.map(async (suggestedTask) => {
       const { data, error } = await supabase
