@@ -7,7 +7,7 @@ function categorizeTaskType(title: string): Task['task_type'] {
   const lowerTitle = title.toLowerCase();
 
   // Keywords for 'bili' (buy)
-  const biliKeywords = ['buy', 'purchase', 'shop', 'acquire', 'get'];
+  const biliKeywords = ['buy', 'bili', 'bumili', 'purchase', 'shop', 'acquire', 'get'];
   if (biliKeywords.some(keyword => lowerTitle.includes(keyword))) {
     return 'bili';
   }
@@ -19,13 +19,13 @@ function categorizeTaskType(title: string): Task['task_type'] {
   }
 
   // Keywords for 'punta' (go)
-  const puntaKeywords = ['go', 'visit', 'travel', 'head to', 'drive to', 'walk to'];
+  const puntaKeywords = ['go', 'visit', 'travel', 'head to', 'pumunta', 'drive to', 'walk to'];
   if (puntaKeywords.some(keyword => lowerTitle.includes(keyword))) {
     return 'punta';
   }
 
   // Keywords for 'study'
-  const studyKeywords = ['study', 'aral', 'learn', 'review', 'read', 'prepare for'];
+  const studyKeywords = ['study', 'aral', 'learn', 'review', 'read', 'prepare for', 'mag-aral'];
   if (studyKeywords.some(keyword => lowerTitle.includes(keyword))) {
     return 'study';
   }
