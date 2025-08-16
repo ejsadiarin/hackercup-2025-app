@@ -5,7 +5,7 @@ import { Task } from "@/types/task";
 import GroceryTab from "@/features/grocery/container/grocery-tab";
 import EmailTab from "@/features/email/container/email-tab";
 import Timer from "@/features/calendar/container/timer";
-import FocusMode from "@/features/canvas /container/focus-mode";
+import FocusMode from "@/features/canvas/container/focus-mode";
 
 interface TaskViewProps {
   slug: string;
@@ -78,9 +78,8 @@ export default function TaskView({ slug }: TaskViewProps) {
         {tasks.map((_, index) => (
           <span
             key={index}
-            className={`w-3 h-3 rounded-full transition-all ${
-              index === currentIndex ? "bg-[#A600A9] scale-110" : "bg-gray-300"
-            }`}
+            className={`w-3 h-3 rounded-full transition-all ${index === currentIndex ? "bg-[#A600A9] scale-110" : "bg-gray-300"
+              }`}
           />
         ))}
       </div>
