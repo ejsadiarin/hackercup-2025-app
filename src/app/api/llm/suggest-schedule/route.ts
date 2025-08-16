@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
   // LLM Prompt (kept for reference/show)
   const llmPrompt = `You are a helpful assistant that helps users organize their daily tasks.
 Given an array of tasks in JSON format, your goal is to:
-1. Suggest a reasonable 'start_date' and 'end_date' for each task, assuming a typical workday. Both 'start_date' and 'end_date' should be full ISO 8601 timestamps (e.g., 'YYYY-MM-DDTHH:MM:SS.sssZ'). Ensure 'end_date' is after 'start_date'. Tasks should be scheduled for the same day as their original 'start_date'. Crucially, ensure there are no overlaps between tasks, and maintain at least a 15-minute gap between the end of one task and the start of the next (e.g., if Task 1 ends at 5:00 PM, Task 2 should start at 5:15 PM or later).
+1. Suggest a reasonable 'start_date' and 'end_date' for each task, assuming a typical workday. Both 'start_date' and 'end_date' should be full ISO 8601 timestamps (e.g., 'YYYY-MM-DDTHH:MM:SS.sssZ'). Ensure 'end_date' is after 'start_date'. Tasks should be scheduled for the same day as their original 'start_date'. Crucially, ensure there are no overlaps between tasks, and maintain at least a 15-minute gap between the end of one task and the start of the next (e.g., if Task 1 ends at 5:00 PM, Task 2 should start at 5:15 PM or later). Another crucial thing is that titles can be in Filipino.
 2. Return the updated array of tasks in the exact same JSON format. Do not include any other text or explanation.
 
 Example Input:
