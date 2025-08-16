@@ -1,0 +1,149 @@
+# requests.http
+# Base URL for your API
+
+
+### 
+
+@authToken = YOUR_SUPABASE_AUTH_TOKEN
+@baseUrl = http://localhost:3000
+
+# --- Authentication ---
+# You need to replace YOUR_SUPABASE_AUTH_TOKEN with a valid JWT from a logged-in user.
+# You can get this token from your browser's local storage after a successful login.
+# For example, look for 'sb-YOUR_SUPABASE_PROJECT_REF-auth-token' in localStorage.
+
+
+### 
+
+# @name Get All Tasks for Authenticated User
+
+GET {{baseUrl}}/api/tasks HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+
+### 
+
+# @name Create a New Task
+
+POST {{baseUrl}}/api/tasks HTTP/1.1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "end_date": "2025-08-15T11:00:00.000Z",
+  "start_date": "2025-08-15T10:00:00.000Z",
+  "status": "inprogress",
+  "task_type": "bili",
+  "title": "Buy groceries"
+}
+
+
+### 
+
+# @name Get Task by ID
+
+# Replace {id} with an actual task ID from your database
+
+GET {{baseUrl}}/api/tasks/1 HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+
+### 
+
+# @name Update Task by ID
+
+# Replace {id} with an actual task ID
+
+PATCH {{baseUrl}}/api/tasks/1 HTTP/1.1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "status": "done",
+  "title": "Buy groceries (updated)"
+}
+
+
+### 
+
+# @name Delete Task by ID
+
+# Replace {id} with an actual task ID
+
+DELETE {{baseUrl}}/api/tasks/1 HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+
+### 
+
+# @name Get Tasks by Date
+
+# Replace YYYY-MM-DD with the desired date (e.g., 2025-08-15)
+
+GET {{baseUrl}}/api/tasks/by-date?date=2025-08-15 HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+
+### 
+
+# @name Get All Public User Profiles
+
+GET {{baseUrl}}/api/users HTTP/1.1
+
+
+### 
+
+# @name Get Public User Profile by ID
+
+# Replace {id} with an actual user ID (e.g., from the /api/users endpoint)
+
+GET {{baseUrl}}/api/users/YOUR_USER_ID_HERE HTTP/1.1
+
+
+### 
+
+# @name Suggest Schedule for Tasks
+
+POST {{baseUrl}}/api/llm/suggest-schedule HTTP/1.1
+Cookie: 
+Content-Type: application/json
+
+[
+  {
+    "end_date": null,
+    "id": 1,
+    "start_date": "2025-08-15T09:00:00.000Z",
+    "status": "inprogress",
+    "task_type": null,
+    "title": "Buy groceries for dinner",
+    "user_id": "f1ab2039-e7eb-4d56-8a4e-367dc3e63fe0"
+  },
+  {
+    "end_date": null,
+    "id": 2,
+    "start_date": "2025-08-15T14:00:00.000Z",
+    "status": "inprogress",
+    "task_type": null,
+    "title": "Meeting with John",
+    "user_id": "f1ab2039-e7eb-4d56-8a4e-367dc3e63fe0"
+  },
+  {
+    "end_date": null,
+    "id": 3,
+    "start_date": "2025-08-16T10:00:00.000Z",
+    "status": "inprogress",
+    "task_type": null,
+    "title": "Study for math exam",
+    "user_id": "f1ab2039-e7eb-4d56-8a4e-367dc3e63fe0"
+  }
+]
+
+###
+# @name Search Products by Name
+GET {{baseUrl}}/api/products/search?name=hotdog
+
+###
+# @name Complete Task by ID
+# Replace {id} with an actual task ID
+PATCH {{baseUrl}}/api/tasks/complete/1
+Authorization: Bearer {{authToken}}
