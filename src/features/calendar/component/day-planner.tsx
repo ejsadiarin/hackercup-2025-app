@@ -20,6 +20,7 @@ import {
 } from "../utils/layout-utils";
 import { useTasksQuery } from "@/features/tasks/hooks/useTasksQuery";
 import { useUpdateTaskMutation } from "@/features/tasks/hooks/useUpdateTaskMutation";
+import Link from "next/link";
 
 type Task = {
   id: string;
@@ -211,42 +212,47 @@ export default function DayPlanner({ slug }: { slug: string }) {
 
             {/* tasks */}
             {layout.map((item) => (
-              <TaskCard
-                key={item.task.id}
-                task={item.task}
-                top={item.top}
-                height={item.height}
-                leftCalc={`${item.leftPercentNum}%`}
-                widthCalc={`calc(${item.widthPercentNum}% - 8px)`}
-                zIndex={item.zIndex}
-                containerRef={containerRef}
-                onResizeMove={(id, newEndY) => {
-                  setTasks((prev) =>
-                    prev.map((t) => {
-                      if (t.id !== id) return t;
-                      return { ...t, end: yToTime(newEndY) };
-                    })
-                  );
-                }}
-                onResizeEnd={(id, newEndY) => {
-                  setTasks((prev) =>
-                    prev.map((t) => {
-                      if (t.id !== id) return t;
-                      // Call your existing mutation
-                      const newEndTime = yToTime(newEndY);
-                      const today = new Date().toISOString().split("T")[0]; // Get YYYY-MM-DD
-                      const isoEnd = new Date(
-                        `${today}T${newEndTime}:00`
-                      ).toISOString();
-                      updateTaskMutation.mutate({
-                        id: Number(id),
-                        end_date: isoEnd,
-                      });
-                      return { ...t, end: newEndTime };
-                    })
-                  );
-                }}
-              />
+              <>
+                <Link href={"/task"}>
+                  {" "}
+                  <TaskCard
+                    key={item.task.id}
+                    task={item.task}
+                    top={item.top}
+                    height={item.height}
+                    leftCalc={`${item.leftPercentNum}%`}
+                    widthCalc={`calc(${item.widthPercentNum}% - 8px)`}
+                    zIndex={item.zIndex}
+                    containerRef={containerRef}
+                    onResizeMove={(id, newEndY) => {
+                      setTasks((prev) =>
+                        prev.map((t) => {
+                          if (t.id !== id) return t;
+                          return { ...t, end: yToTime(newEndY) };
+                        })
+                      );
+                    }}
+                    onResizeEnd={(id, newEndY) => {
+                      setTasks((prev) =>
+                        prev.map((t) => {
+                          if (t.id !== id) return t;
+                          // Call your existing mutation
+                          const newEndTime = yToTime(newEndY);
+                          const today = new Date().toISOString().split("T")[0]; // Get YYYY-MM-DD
+                          const isoEnd = new Date(
+                            `${today}T${newEndTime}:00`
+                          ).toISOString();
+                          updateTaskMutation.mutate({
+                            id: Number(id),
+                            end_date: isoEnd,
+                          });
+                          return { ...t, end: newEndTime };
+                        })
+                      );
+                    }}
+                  />
+                </Link>
+              </>
             ))}
           </div>
         </div>

@@ -7,28 +7,16 @@ import EmailTab from "@/features/email/container/email-tab";
 import { useCalendarStore } from "@/features/store/calendarStore";
 import Timer from "@/features/calendar/container/timer";
 import FocusMode from "@/features/canvas/container/focus-mode";
-
+import { useTasksQuery } from "../hooks/useTasksQuery";
+import { formatDayToDate } from "../utils/format-date";
 export default function TaskView() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const selectedDay = new Date().toISOString().split("T")[0];
+
+  const queryResult = useTasksQuery(selectedDay);
+  const tasks: Task[] = queryResult.data ?? [];
+  const { isLoading, error } = queryResult;
+
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const { selectedDay } = useCalendarStore();
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch(`/api/tasks?date=${selectedDay}`);
-        if (!res.ok) throw new Error("Failed to fetch tasks");
-        const data: Task[] = await res.json();
-        setTasks(data);
-        setCurrentIndex(0);
-      } catch (err) {
-        console.error(err);
-        setTasks([]);
-      }
-    };
-    fetchTasks();
-  }, [selectedDay]);
 
   const nextTask = () =>
     setCurrentIndex((prev) => Math.min(prev + 1, tasks.length - 1));
