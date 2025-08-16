@@ -58,9 +58,10 @@ export default function TaskView({ slug }: TaskViewProps) {
         taskId={tasks[currentIndex].id}
         status={tasks[currentIndex].status}
       >
-        {/* <EmailTab /> */}
-        {/* <GroceryTab /> */}
-        <FocusMode />
+        {tasks[currentIndex].task_type === "bili" && <GroceryTab />}
+        {tasks[currentIndex].task_type === "appointment" && <EmailTab />}
+        {tasks[currentIndex].task_type === "punta" && <FocusMode />}
+        {tasks[currentIndex].task_type === "study" && <Timer />}
       </IndivTask>
 
       {/* Right Arrow */}
