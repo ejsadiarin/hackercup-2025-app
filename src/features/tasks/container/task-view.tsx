@@ -60,8 +60,7 @@ export default function TaskView() {
       >
         {tasks[currentIndex].task_type === "bili" && <GroceryTab />}
         {tasks[currentIndex].task_type === "appointment" && <EmailTab />}
-        {tasks[currentIndex].task_type === "punta" && <FocusMode />}
-        {tasks[currentIndex].task_type === "study" && <Timer />}
+        {tasks[currentIndex].task_type === "study" && <FocusMode />}
       </IndivTask>
 
       {/* Right Arrow */}
@@ -78,8 +77,9 @@ export default function TaskView() {
         {tasks.map((_, index) => (
           <span
             key={index}
-            className={`w-3 h-3 rounded-full transition-all ${index === currentIndex ? "bg-[#A600A9] scale-110" : "bg-gray-300"
-              }`}
+            className={`w-3 h-3 rounded-full transition-all ${
+              index === currentIndex ? "bg-[#A600A9] scale-110" : "bg-gray-300"
+            }`}
           />
         ))}
       </div>
