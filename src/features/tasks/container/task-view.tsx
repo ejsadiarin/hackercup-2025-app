@@ -9,6 +9,7 @@ import Timer from "@/features/calendar/container/timer";
 import FocusMode from "@/features/canvas/container/focus-mode";
 import { useTasksQuery } from "../hooks/useTasksQuery";
 import { formatDayToDate } from "../utils/format-date";
+import Link from "next/link";
 export default function TaskView() {
   const selectedDay = new Date().toISOString().split("T")[0];
 
@@ -31,6 +32,9 @@ export default function TaskView() {
 
   return (
     <div className="relative flex flex-col justify-center items-center w-full p-4">
+      <Link className={"absolute top-10 left-10 font-semibold"} href={"/"}>
+        <button>Go Back</button>{" "}
+      </Link>
       {/* Left Arrow */}
       <button
         onClick={prevTask}
