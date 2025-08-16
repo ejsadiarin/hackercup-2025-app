@@ -24,7 +24,13 @@ export default function ScheduleContainer({ slug }: { slug: string }) {
           drag around the timeblocks to adjust schedule
         </p>
 
-        <Button variant="default" className="block max-w-96 w-full mx-auto">
+        <Button
+          variant="default"
+          className="block max-w-96 w-full mx-auto"
+          onClick={() => {
+            window.location.href = "/task";
+          }}
+        >
           Confirm
         </Button>
       </main>
