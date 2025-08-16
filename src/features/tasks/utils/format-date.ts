@@ -1,9 +1,10 @@
-export const formatDayToDate = (day: {
+export const formatDayToDate = (day?: {
   dayName: string;
   dateNum: number;
   monthName: string;
   year: number;
 }) => {
+  if (!day) return;
   const monthMap: Record<string, number> = {
     Jan: 0,
     January: 0,

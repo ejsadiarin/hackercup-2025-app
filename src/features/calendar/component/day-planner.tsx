@@ -16,7 +16,10 @@ import {
   timeToY,
   yToTime,
   computePositions,
+  mapApiTasks,
 } from "../utils/layout-utils";
+import { useTasksQuery } from "@/features/tasks/hooks/useTasksQuery";
+import { useUpdateTaskMutation } from "@/features/tasks/hooks/useUpdateTaskMutation";
 
 type Task = {
   id: string;
@@ -26,37 +29,29 @@ type Task = {
   color: string;
 };
 
-export default function DayPlanner() {
+export default function DayPlanner({ slug }: { slug: string }) {
+  const selectedDay = slug;
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Jog at BGC",
-      start: "08:00",
-      end: "09:00",
-      color: "bg-red-200",
-    },
-    {
-      id: "2",
-      title: "Buy groceries",
-      start: "09:15",
-      end: "10:15",
-      color: "bg-green-200",
-    },
-    {
-      id: "3",
-      title: "Buy groceries",
-      start: "09:15",
-      end: "10:15",
-      color: "bg-green-200",
-    },
-  ]);
+  const {
+    data: apiTasks,
+    isLoading,
+    error,
+  } = useTasksQuery(selectedDay ? selectedDay : undefined);
 
   const timelineHeight = HOURS * 60 * PIXELS_PER_MINUTE; // 1440
   // content width calculation not required; layout uses absolute positioning
 
   // computePositions provided by layout-utils
+  const [tasks, setTasks] = useState<Task[]>([]);
   const positions = useMemo(() => computePositions(tasks), [tasks]);
+
+  const updateTaskMutation = useUpdateTaskMutation();
+
+  useEffect(() => {
+    if (apiTasks) {
+      setTasks(mapApiTasks(apiTasks));
+    }
+  }, [apiTasks]);
 
   // Precompute layout info so JSX only contains expressions and avoid re-calculating on every render
   const layout = useMemo(() => {
@@ -97,6 +92,15 @@ export default function DayPlanner() {
           const newStart = yToTime(clamped);
           const duration = timeToY(task.end) - timeToY(task.start);
           const newEnd = yToTime(clamped + duration);
+
+          const isoStart = new Date(`1970-01-01T${newStart}:00`).toISOString();
+          const isoEnd = new Date(`1970-01-01T${newEnd}:00`).toISOString();
+          updateTaskMutation.mutate({
+            id: Number(task.id),
+            start_date: isoStart,
+            end_date: isoEnd,
+          });
+
           return { ...task, start: newStart, end: newEnd };
         }
         return task;
@@ -227,7 +231,16 @@ export default function DayPlanner() {
                   setTasks((prev) =>
                     prev.map((t) => {
                       if (t.id !== id) return t;
-                      return { ...t, end: yToTime(newEndY) };
+                      // Call your existing mutation
+                      const newEndTime = yToTime(newEndY);
+                      const isoEnd = new Date(
+                        `1970-01-01T${newEndTime}:00`
+                      ).toISOString();
+                      updateTaskMutation.mutate({
+                        id: Number(id),
+                        end_date: isoEnd,
+                      });
+                      return { ...t, end: newEndTime };
                     })
                   );
                 }}

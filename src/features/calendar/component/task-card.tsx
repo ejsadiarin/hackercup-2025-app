@@ -6,6 +6,7 @@ import { timeToMinutes, SNAP_PX } from "../utils/layout-utils";
 
 import type { Task } from "../types/types";
 import { MdLocalGroceryStore } from "react-icons/md";
+import { useUpdateTaskMutation } from "@/features/tasks/hooks/useUpdateTaskMutation";
 
 export default function TaskCard({
   task,
@@ -41,6 +42,8 @@ export default function TaskCard({
   const startRef = useRef<{ startClientY: number; startHeight: number } | null>(
     null
   );
+
+  const updateTaskMutation = useUpdateTaskMutation();
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.stopPropagation();

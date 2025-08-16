@@ -6,12 +6,22 @@ import WelcomeTab from "@/features/welcome/container/welcome-tab";
 import { useCalendarStore } from "@/features/store/calendarStore";
 import { Task } from "@/types/task";
 import { formatDayToDate } from "../utils/format-date";
+import Link from "next/link";
+import { useTasksQuery } from "../hooks/useTasksQuery";
+import useAddTaskMutate from "../hooks/useAddTaskMutation";
+import { useDeleteTaskMutation } from "../hooks/useDeleteTaskMutate";
 
 export default function TasksTab() {
-  const [tasks, setNewTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState<string>("");
-
   const { selectedDay } = useCalendarStore();
+  const {
+    data: apiTasks,
+    isLoading,
+    error,
+  } = useTasksQuery(selectedDay ? formatDayToDate(selectedDay) : undefined);
+
+  const addTaskMutation = useAddTaskMutate();
+  const deleteTaskMutation = useDeleteTaskMutation();
   const displayDate = selectedDay
     ? `${selectedDay.dayName}, ${selectedDay.monthName} ${selectedDay.dateNum}`
     : new Date().toLocaleDateString("en-US", {
@@ -23,63 +33,14 @@ export default function TasksTab() {
   // Convert selected day to "YYYY-MM-DD" format
   const pgDate = selectedDay ? formatDayToDate(selectedDay) : null;
 
-  // Fetch tasks whenever selectedDay changes
-  useEffect(() => {
-    if (!pgDate) {
-      setNewTasks([]);
-      return;
-    }
-
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch(`/api/tasks?date=${pgDate}`);
-        if (!res.ok) throw new Error("Failed to fetch tasks");
-        const data: Task[] = await res.json();
-
-        // Convert pgDate to a JS Date object at local midnight
-        const selectedDateObj = new Date(pgDate + "T00:00:00");
-
-        // Filter tasks to match the selected date
-        const filtered = data.filter((task) => {
-          const taskDateObj = new Date(task.start_date); // UTC timestamp from Supabase
-          return (
-            taskDateObj.getFullYear() === selectedDateObj.getFullYear() &&
-            taskDateObj.getMonth() === selectedDateObj.getMonth() &&
-            taskDateObj.getDate() === selectedDateObj.getDate()
-          );
-        });
-
-        setNewTasks(filtered);
-      } catch (err) {
-        console.error(err);
-        setNewTasks([]);
-      }
-    };
-
-    fetchTasks();
-  }, [pgDate]);
-
-  const addTaskToDB = async (title: string) => {
+  const addTaskToDB = (title: string) => {
     const task: Omit<Task, "id" | "start_date" | "user_id" | "end_date"> = {
       title,
       status: "inprogress",
       task_type: null,
     };
 
-    try {
-      const res = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(task),
-      });
-
-      if (!res.ok) throw new Error("Failed to create task");
-
-      const createdTask: Task = await res.json();
-      setNewTasks((prev) => [...prev, createdTask]);
-    } catch (err) {
-      console.error(err);
-    }
+    addTaskMutation.mutate(task);
   };
 
   const handleAddTask = () => {
@@ -95,18 +56,25 @@ export default function TasksTab() {
   };
 
   const handleRemoveTask = async (taskId: number, index: number) => {
-    try {
-      const res = await fetch(`/api/tasks/${taskId}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) throw new Error("Failed to delete task");
-
-      setNewTasks((prev) => prev.filter((_, i) => i !== index));
-    } catch (err) {
-      console.error(err);
-    }
+    deleteTaskMutation.mutate(taskId);
   };
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center p-4">
+        <h1 className="text-3xl font-bold text-red-600 mb-4">Oops!</h1>
+        <p className="text-lg text-gray-700 mb-6">
+          Failed to load tasks. Please try again later.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-[#A600A9] text-white rounded-md hover:bg-[#a600a9c8] transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 pb-12">
@@ -114,13 +82,14 @@ export default function TasksTab() {
         <h1 className="font-bold">{displayDate}</h1>
       </div>
 
-      {tasks.map((task, index) => (
-        <TaskList
-          key={task.id}
-          task={task}
-          onRemove={() => handleRemoveTask(task.id, index)}
-        />
-      ))}
+      {apiTasks &&
+        apiTasks.map((task, index) => (
+          <TaskList
+            key={task.id}
+            task={task}
+            onRemove={() => handleRemoveTask(task.id, index)}
+          />
+        ))}
 
       <div className="flex items-center gap-2">
         <button
@@ -149,9 +118,13 @@ export default function TasksTab() {
       </div>
 
       <div className="mt-48">
-        <button className="flex w-full justify-center border-2 bg-[#A600A9] outline-none text-white px-4 py-2 rounded-lg font-bold">
-          Start my Day!
-        </button>
+        <Link
+          href={`/schedule/${selectedDay ? formatDayToDate(selectedDay) : ""}`}
+        >
+          <button className="flex w-full justify-center border-2 bg-[#A600A9] outline-none text-white px-4 py-2 rounded-lg font-bold">
+            Start my Day!
+          </button>
+        </Link>
       </div>
     </div>
   );

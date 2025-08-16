@@ -1,8 +1,13 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import DayPlanner from "../component/day-planner";
 import { formatToday } from "../utils/layout-utils";
+import { useTasksQuery } from "@/features/tasks/hooks/useTasksQuery";
+import { useCalendarStore } from "@/features/store/calendarStore";
+import { formatDayToDate } from "@/features/tasks/utils/format-date";
 
-export default function ScheduleContainer() {
+export default function ScheduleContainer({ slug }: { slug: string }) {
   return (
     <>
       <main>
@@ -13,7 +18,7 @@ export default function ScheduleContainer() {
             Based on your tasks, here&apos;s a suggested schedule.
           </p>
         </div>
-        <DayPlanner />
+        <DayPlanner slug={slug} />
 
         <p className=" text-center my-4 font-light">
           drag around the timeblocks to adjust schedule

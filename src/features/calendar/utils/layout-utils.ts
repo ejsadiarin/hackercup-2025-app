@@ -80,3 +80,29 @@ export function formatToday(date = new Date(), locale = "en-US") {
     day: "numeric",
   }).format(date); // -> "Monday, July 21"
 }
+
+export function mapApiTasks(apiTasks: any[]): Task[] {
+  return apiTasks.map((t) => {
+    const start = new Date(t.start_date);
+    const end = t.end_date
+      ? new Date(t.end_date)
+      : new Date(start.getTime() + 60 * 60 * 1000); // default 1h
+    const formatTime = (d: Date) =>
+      `${String(d.getHours()).padStart(2, "0")}:${String(
+        d.getMinutes()
+      ).padStart(2, "0")}`;
+    const colors = [
+      "bg-red-200",
+      "bg-green-200",
+      "bg-blue-200",
+      "bg-yellow-200",
+    ];
+    return {
+      id: String(t.id),
+      title: t.title,
+      start: formatTime(start),
+      end: formatTime(end),
+      color: colors[t.id % colors.length],
+    };
+  });
+}

@@ -4,22 +4,18 @@ import IndivTask from "@/features/tasks/components/indiv-task";
 import { Task } from "@/types/task";
 import GroceryTab from "@/features/grocery/container/grocery-tab";
 import EmailTab from "@/features/email/container/email-tab";
+import { useCalendarStore } from "@/features/store/calendarStore";
 
-interface TaskViewProps {
-  slug: string;
-}
-
-export default function TaskView({ slug }: TaskViewProps) {
-  const [selectedDate] = useState(
-    slug || new Date().toISOString().split("T")[0]
-  );
+export default function TaskView() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const { selectedDay } = useCalendarStore();
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch(`/api/tasks?date=${selectedDate}`);
+        const res = await fetch(`/api/tasks?date=${selectedDay}`);
         if (!res.ok) throw new Error("Failed to fetch tasks");
         const data: Task[] = await res.json();
         setTasks(data);
@@ -30,14 +26,18 @@ export default function TaskView({ slug }: TaskViewProps) {
       }
     };
     fetchTasks();
-  }, [selectedDate]);
+  }, [selectedDay]);
 
   const nextTask = () =>
     setCurrentIndex((prev) => Math.min(prev + 1, tasks.length - 1));
   const prevTask = () => setCurrentIndex((prev) => Math.max(prev - 1, 0));
 
   if (!tasks.length)
-    return <p className="text-center mt-20">No tasks for {selectedDate}</p>;
+    return (
+      <p className="text-center mt-20">
+        No tasks for {selectedDay ? String(selectedDay) : ""}
+      </p>
+    );
 
   return (
     <div className="relative flex flex-col justify-center items-center w-full p-4">
