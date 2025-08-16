@@ -4,6 +4,8 @@ import IndivTask from "@/features/tasks/components/indiv-task";
 import { Task } from "@/types/task";
 import GroceryTab from "@/features/grocery/container/grocery-tab";
 import EmailTab from "@/features/email/container/email-tab";
+import Timer from "@/features/calendar/container/timer";
+import FocusMode from "@/features/canvas /container/focus-mode";
 
 interface TaskViewProps {
   slug: string;
@@ -57,7 +59,8 @@ export default function TaskView({ slug }: TaskViewProps) {
         status={tasks[currentIndex].status}
       >
         {/* <EmailTab /> */}
-        <GroceryTab />
+        {/* <GroceryTab /> */}
+        <FocusMode />
       </IndivTask>
 
       {/* Right Arrow */}
